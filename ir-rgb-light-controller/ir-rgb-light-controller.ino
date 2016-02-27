@@ -33,6 +33,13 @@ void setup() {
   irrecv.enableIRIn(); // Start the receiver
 
   Serial.println("Hello world!");
+
+  // used to test the lights
+  for (int i = 0; i < 6; i++) {
+    setLights(COLORS[i]);
+    delay(500);
+  }
+  setLights("000000");
 }
 
 void loop() {
@@ -59,29 +66,27 @@ void p(char *fmt, ... ) {
 }
 
 void setLights(char* color_code) {
-  int r = strtol(substr(color_code, 0, 2), NULL, 16);
-  int g = strtol(substr(color_code, 2, 2), NULL, 16);
-  int b = strtol(substr(color_code, 4, 2), NULL, 16);
+  String color_string = color_code;
+
+  String r_str = color_string.substring(0, 2);
+  String g_str = color_string.substring(2, 4);
+  String b_str = color_string.substring(4, 6);
+
+  char r_hex[3];
+  char b_hex[3];
+  char g_hex[3];
+
+  r_str.toCharArray(r_hex, 3);
+  g_str.toCharArray(g_hex, 3);
+  b_str.toCharArray(b_hex, 3);
+
+  int r_dec = strtol(r_hex, NULL, 16);
+  int g_dec = strtol(g_hex, NULL, 16);
+  int b_dec = strtol(b_hex, NULL, 16);
 
   p("Setting color code to: %s", color_code);
-  p("r: %d", r);
-  p("g: %d", g);
-  p("b: %d", b);
+  p("r: %d", r_dec);
+  p("g: %d", g_dec);
+  p("b: %d", b_dec);
 }
 
-char* substr(char* str, int strt, int len) {
-  char* response = "00";
-  int pos = strt;
-
-  for (int i = 0; i < len; i++ )
-  {
-    if (pos > strlen(str)) {
-      break;
-    }
-
-    response[i] = str[pos];
-    pos++;
-  }
-
-  return response;
-}
