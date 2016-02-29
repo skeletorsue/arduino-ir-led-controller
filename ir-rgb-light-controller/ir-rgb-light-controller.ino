@@ -32,10 +32,10 @@ IRrecv irrecv(RECV_PIN);
 decode_results results;
 
 void setup() {
+  Serial.println("Hello world!");
+
   Serial.begin(9600);
   irrecv.enableIRIn(); // Start the receiver
-
-  Serial.println("Hello world!");
 
   pinMode(RED_PIN, OUTPUT);
   pinMode(GREEN_PIN, OUTPUT);
