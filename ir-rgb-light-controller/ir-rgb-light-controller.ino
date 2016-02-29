@@ -34,7 +34,7 @@ decode_results results;
 void setup() {
   Serial.println("Hello world!");
 
-  Serial.begin(9600);
+  Serial.begin(9600); // Start serial
   irrecv.enableIRIn(); // Start the receiver
 
   pinMode(RED_PIN, OUTPUT);
@@ -71,6 +71,7 @@ void p(char *fmt, ... ) {
 void setLights(char* color_code) {
   String color_string = color_code;
 
+  // start convoluted way to get parts of the color hex
   String r_str = color_string.substring(0, 2);
   String g_str = color_string.substring(2, 4);
   String b_str = color_string.substring(4, 6);
@@ -82,7 +83,9 @@ void setLights(char* color_code) {
   r_str.toCharArray(r_hex, 3);
   g_str.toCharArray(g_hex, 3);
   b_str.toCharArray(b_hex, 3);
+  // end convoluted way to get parts of the color hex
 
+  // conver the hex parts to decimal
   int r_dec = strtol(r_hex, NULL, 16);
   int g_dec = strtol(g_hex, NULL, 16);
   int b_dec = strtol(b_hex, NULL, 16);
@@ -92,7 +95,10 @@ void setLights(char* color_code) {
   p("g: %d", g_dec);
   p("b: %d", b_dec);
 
+  // we want to fade the color change. So this will loop and change every color by 1 (if necessary) until they line up.
   while (RED_PIN_VALUE != r_dec || GREEN_PIN_VALUE != g_dec || BLUE_PIN_VALUE != b_dec) {
+
+  	// we only want to change the red pin if it's not already correct
     if (r_dec != RED_PIN_VALUE) {
       if (r_dec < RED_PIN_VALUE ) {
         setRed(RED_PIN_VALUE - 1);
@@ -101,6 +107,7 @@ void setLights(char* color_code) {
       }
     }
 
+	// we only want to change the green pin if it's not already correct
     if (g_dec != GREEN_PIN_VALUE) {
       if (g_dec < GREEN_PIN_VALUE ) {
         setGreen(GREEN_PIN_VALUE - 1);
@@ -109,14 +116,17 @@ void setLights(char* color_code) {
       }
     }
 
-    if (b_dec != BLUE_PIN_VALUE) {
+    // we only want to change the blue pin if it's not already correct
+	if (b_dec != BLUE_PIN_VALUE) {
       if (b_dec < BLUE_PIN_VALUE ) {
         setBlue(BLUE_PIN_VALUE - 1);
       } else {
         setBlue(BLUE_PIN_VALUE + 1);
       }
     }
+
     delay(FADE_SPEED);
+
   }
 
 }
@@ -140,6 +150,7 @@ void lightTest() {
   Serial.println("Starting light test sequence");
   int i;
 
+  // fade through the rgb scale
   for (i = 0; i < 256; i++) {
     setRed(i);
     delay(5);
@@ -167,10 +178,12 @@ void lightTest() {
     delay(5);
   }
 
+  // cycle through each of the programmed colors
   for (int i = 0; i < 6; i++) {
     setLights(COLORS[i]);
   }
 
+  // default to the lights being off
   setLights("000000");
 
   Serial.println("Light test sequence has completed, how did it look?");
